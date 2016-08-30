@@ -4,8 +4,9 @@ AngularJS starting kit with gulp, to get you up and running with as less configu
 Wanna use it:
 
 - Download it as a starting point for your project
-- Write down "npm install" to get all the dependencies installed
-- Run the "gulp" command using terminal/console to get it started
+- Run "npm install" in the command prompt/terminal to get all the dependencies installed
+- ***IMPORTANT!*** Change rules.json name to ".eslintrc". Otherwise the eslint will not run and the gulp task will fail
+- Run "gulp" in the command prompt/terminal to get run your app!
 
 What it does:
 - Sets up a local dev server on port 1337.
