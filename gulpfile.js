@@ -3,23 +3,22 @@
 var gulp = require('gulp');
 var connect = require('gulp-connect'); //run a dev server
 var open = require('gulp-open'); //open a url in a web browser
-var browserify = require('browserify'); // BundlesJS
-var source = require('vinyl-source-stream'); //Use conventional text streams with Gulp
+var babel = require('gulp-babel');
 var concat = require('gulp-concat'); // Add files together
-var eslint = require('gulp-eslint');
+var rename = require('gulp-rename');
+var sass = require('gulp-sass');
 
 //A Config to point directories, port, the url of the web server w'ere about to use
 var config = {
-    port: 1337,
+    port: 8080,
     devBaseUrl: 'http://localhost',
     paths: {
         html: './src/*.html',
+        views: './src/**/**.html',
         js: './src/**/*.js',
-        css: [
-            'node_modules/bootstrap/dist/css/bootstrap.min.css',
-            'node_modules/bootstrap/dist/css/bootstrap-theme.min.css'
-            //Add more CSS files here, as you create them for your app!
-        ],
+        vendor: 'bower_components/**/**.min.js',
+        css: 'bower_components/**/**.css',
+        sass: './src/**/*.scss',
         dist: './dist',
         mainJS: './src/app.js'
     }
@@ -47,34 +46,49 @@ gulp.task('html', function () {
         .pipe(connect.reload())
 });
 
-//Concat any css into 1 file called bundle.css
-gulp.task('css', function () {
-   gulp.src(config.paths.css)
+//Load up the index.html file for the app
+gulp.task('views', function () {
+    gulp.src(config.paths.views)
+        .pipe(rename({dirname: ''}))
+        .pipe(gulp.dest(config.paths.dist+'/views'))
+        .pipe(connect.reload())
+});
+
+gulp.task('sass', function () {
+   gulp.src(config.paths.sass)
+       .pipe(sass())
        .pipe(concat('bundle.css'))
        .pipe(gulp.dest(config.paths.dist + '/css'))
 });
 
-//Concat any js into 1 file called bundle.js
-//Compile and run any js file
-gulp.task('js', function () {
-    browserify(config.paths.mainJS)
-        .bundle()
-        .on('error', console.error.bind(console))
-        .pipe(source('bundle.js'))
+//Concat any css into 1 file called bundle.css
+gulp.task('style_vendor', function () {
+   gulp.src(config.paths.css)
+       .pipe(concat('vendor.css'))
+       .pipe(gulp.dest(config.paths.dist + '/css'))
+});
+
+gulp.task('vendor', function () {
+    gulp.src(config.paths.vendor)
+        .pipe(concat('vendor.min.js'))
         .pipe(gulp.dest(config.paths.dist + '/scripts'))
         .pipe(connect.reload());
 });
 
-gulp.task('lint', function () {
-    return gulp.src(config.paths.js)
-        .pipe(eslint({config: '.eslintrc.json'}))
-        .pipe(eslint.format())
+gulp.task('js', function () {
+    gulp.src(config.paths.js)
+        .pipe(babel({presets: ['es2015']}))
+        .pipe(concat('bundle.js'))
+        .pipe(gulp.dest(config.paths.dist + '/scripts'))
+        .pipe(connect.reload());
 });
 
 //Watches the html and JS files for a change
 gulp.task('watch', function () {
     gulp.watch(config.paths.html, ['html']);
-    gulp.watch(config.paths.js, ['js', 'lint']);
+    gulp.watch(config.paths.views, ['views']);
+    gulp.watch(config.paths.sass, ['sass']);
+    gulp.watch(config.paths.js, ['js']);
 });
 
 /**
@@ -85,4 +99,4 @@ gulp.task('watch', function () {
  * 4. Set up a local dev server, Open a web browser the get the stuff running
  * 5. Watch for any real time changes
  */
-gulp.task('default', ['html', 'css', 'js', 'lint', 'open', 'watch']);
+gulp.task('default', ['html', 'views', 'style_vendor', 'sass', 'vendor', 'js', 'open', 'watch']);
