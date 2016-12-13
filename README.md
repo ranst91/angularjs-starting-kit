@@ -1,1 +1,1 @@
-# tnm
+# AngularJS starting kit
