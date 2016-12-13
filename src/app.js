@@ -1,4 +1,4 @@
-$ = jQuery = require('jquery');
-var angular = require('angular');
-
-
+//Initialize the app
+(function () {
+    angular.module('app', ["app.core"]);
+})();

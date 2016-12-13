@@ -3,16 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>AngularJS Starterkit</title>
+    <link rel="stylesheet" href="css/vendor.css">
     <link rel="stylesheet" href="css/bundle.css">
 </head>
-<body ng-app="myApp">
-<div class="jumbotron">
-    <h1>Hello world with with bootstrap!</h1>
+<body ng-app="app">
+<nav class="navbar navigation navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <!-- Branding -->
+            <a class="navbar-brand" href="#">
+                TNM
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="app-navbar-collapse">
+            <!-- Left Side Of Navbar -->
+            <ul class="nav navbar-nav">
+                <li>
+                    <a ui-sref="home">Show all rooms</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div ui-view class="container">
+    Loading...
 </div>
-<div id="app">
-
-</div>
-
+<script src="scripts/vendor.min.js"></script>
 <script src="scripts/bundle.js"></script>
 </body>
 </html>
